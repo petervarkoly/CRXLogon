@@ -1,0 +1,13 @@
+﻿<Window x:Class="CRXLogon.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CRXLogon"
+        mc:Ignorable="d"
+        Title="Verbindung" Height="300" Width="300">
+    <Grid>
+        <TextBlock TextAlignment="Center" Style="{StaticResource MaterialDesignDisplay2TextBlock}" Margin="33,63,33,143"><Run Text="Verbund"/><Run Text="en"/></TextBlock>
+        <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" Click="Button_Click" Content="Trennen" VerticalAlignment="Top" Margin="93,163,93,0"  Width="106"/>
+    </Grid>
+</Window>
