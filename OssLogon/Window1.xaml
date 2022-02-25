@@ -5,9 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CRXLogon"
         mc:Ignorable="d"
+        Icon="pack://application:,,,/crx_icon.ico"
         Title="Verbindung" Height="300" Width="300">
+    <Window.Background>
+        <ImageBrush>
+            <ImageBrush.ImageSource>
+                <BitmapImage UriSource="pack://application:,,,/dark-material-bg.jpg"></BitmapImage>
+            </ImageBrush.ImageSource>
+        </ImageBrush>
+    </Window.Background>
     <Grid>
-        <TextBlock TextAlignment="Center" Style="{StaticResource MaterialDesignDisplay2TextBlock}" Margin="33,63,33,143"><Run Text="Verbund"/><Run Text="en"/></TextBlock>
-        <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" Click="Button_Click" Content="Trennen" VerticalAlignment="Top" Margin="93,163,93,0"  Width="106"/>
+        <TextBlock TextAlignment="Center" Style="{StaticResource MaterialDesignBody2TextBlock}" Margin="33,63,33,143" Foreground="#FAB90A"><Run Text="Verbund"/><Run Text="en"/></TextBlock>
+        <Button Style="{StaticResource MaterialDesignRaisedDarkButton}" Click="Button_Click" Background="#262933" Foreground="White" Content="Trennen" VerticalAlignment="Top" Margin="93,163,93,0"  Width="106"/>
     </Grid>
 </Window>

@@ -1,15 +1,12 @@
-﻿using System;
-using System.Windows;
+﻿using IWshRuntimeLibrary;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Net;
-using System.Text;
-using System.Collections.Specialized;
-using System.Diagnostics;
-using System.Configuration;
-using System.IO;
-using System.Collections.Generic;
-using IWshRuntimeLibrary;
+using System.Windows;
 
 namespace CRXLogon
 {
@@ -20,12 +17,13 @@ namespace CRXLogon
     {
         public object HttpUtility { get; private set; }
 
-        public String token; 
+        public String token;
 
         public MainWindow()
         {
-            try {
-            InitializeComponent();
+            try
+            {
+                InitializeComponent();
             }
             catch (Exception ex)
             {
@@ -62,17 +60,19 @@ namespace CRXLogon
 
         }
 
-        private void OnLoad(object sender, RoutedEventArgs e) {
+        private void OnLoad(object sender, RoutedEventArgs e)
+        {
             System.Diagnostics.Process.Start("net.exe", "use /del * /yes");
         }
 
-        private void runScript(String script) {
+        private void runScript(String script)
+        {
             //MessageBox.Show(script + "runScript");
 
             string path = ConfigurationManager.AppSettings["tmp"];
             string fullPath = System.Environment.ExpandEnvironmentVariables(path); ProcessStartInfo processInfo;
 
-           // MessageBox.Show(fullPath + "savepath of script");
+            // MessageBox.Show(fullPath + "savepath of script");
             //string output = ""; 
 
             string logon = fullPath + "\\Logon.bat";
@@ -92,45 +92,53 @@ namespace CRXLogon
             process = Process.Start(processInfo);
             process.WaitForExit();
             this.Visibility = Visibility.Collapsed;
-            disconnectPrinterShare();
+           // disconnectPrinterShare();
             Window1 connect = new Window1();
             connect.ShowDialog();
-            }
+        }
 
 
         public void stConnect(String name, String pwd)
         {
+            HttpResponseMessage s =null ;
+            try
+            {
+                s = GetToken(name, pwd);
+            }
+            catch {
+                MessageBox.Show("Admin nicht erreichbar!", "Unerreichbar");
+            }
 
-            HttpResponseMessage s = GetToken(name, pwd);
-            
             if (s.StatusCode.ToString() == "OK")
             {
-                
+
                 String script = GetLogonScript(s.Content.ReadAsStringAsync().Result);
-             //   MessageBox.Show(script + "script in connect");
-             /*   try
-                {
-                    connectPrinterShare(s.Content.ReadAsStringAsync().Result);
-                }
-                catch {
-                    MessageBox.Show("Printserver unavailable");
-                }*/
+                //   MessageBox.Show(script + "script in connect");
+                /*   try
+                   {
+                       connectPrinterShare(s.Content.ReadAsStringAsync().Result);
+                   }
+                   catch {
+                       MessageBox.Show("Printserver unavailable");
+                   }*/
                 //MessageBox.Show("connected Printer Share");
                 runScript(script);
-                try
-                {
+              /*    try
+              {
                     disconnectPrinterShare();
                 }
-                catch {
-                    
-                }
-
-            } else if(s.StatusCode.ToString() == "Unauthorized")
+                catch
                 {
+
+                }*/
+
+            }
+            else if (s.StatusCode.ToString() == "Unauthorized")
+            {
 
                 pw.Clear();
                 String caption = "Fehler";
-                MessageBox.Show("Passwort falsch!",caption);
+                MessageBox.Show("Passwort falsch!", caption);
             }
 
 
@@ -146,7 +154,8 @@ namespace CRXLogon
              Console.WriteLine(GetPrinters(s,name,pw));*/
         }
 
-        private void connectPrinterShare(String token) {
+        private void connectPrinterShare(String token)
+        {
 
             IWshNetwork_Class printerShare = new IWshNetwork_Class();
 
@@ -155,12 +164,13 @@ namespace CRXLogon
 
             string share = "\\\\" + printserver + "\\print$";
             string cred = Domain + "\\" + userName.Text;
-          //  MessageBox.Show(Domain + "   " + printserver + " Cred is: " + cred );
+            //  MessageBox.Show(Domain + "   " + printserver + " Cred is: " + cred );
 
-            printerShare.MapNetworkDrive("X:", share, Type.Missing, cred, pw.Password); 
+            printerShare.MapNetworkDrive("X:", share, Type.Missing, cred, pw.Password);
         }
 
-        private void disconnectPrinterShare() {
+        private void disconnectPrinterShare()
+        {
             IWshNetwork_Class printerShare = new IWshNetwork_Class();
 
             printerShare.RemoveNetworkDrive("X:");
@@ -168,7 +178,7 @@ namespace CRXLogon
 
         private HttpResponseMessage GetToken(String name, String password)
         {
-           
+
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11;
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             var client = new HttpClient();
@@ -181,39 +191,41 @@ namespace CRXLogon
             client.DefaultRequestHeaders.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
             content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+
+           // HttpResponseMessage res= client.PostAsync("https://192.168.79.128:443/api/sessions/login", new FormUrlEncodedContent(values)).Result;
            
-                //HttpResponseMessage response = client.PostAsync("https://172.16.0.2/api/sessions/login", new FormUrlEncodedContent(values)).Result;
                 HttpResponseMessage res = client.PostAsync("https://admin/api/sessions/login", content).Result;
                 var token = res.Content.ReadAsStringAsync().Result;
 
 
                 Console.WriteLine("just token: " + token);
                 Console.WriteLine("res Status: " + res.StatusCode);
-               // Console.WriteLine("CodeIs: ", res.Headers);
-               
-                return res; 
+                // Console.WriteLine("CodeIs: ", res.Headers);
             
-             /*client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
-             client.Headers[HttpRequestHeader.Accept] = "text/plain";
-             var data = "username=" + name + "&password=" + password;
+            return res;
 
-             try
-             {
-                 var res = client.UploadString("https://172.16.0.2/api/sessions/login", "POST", data);
-                 return res;
+            /*client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
+            client.Headers[HttpRequestHeader.Accept] = "text/plain";
+            var data = "username=" + name + "&password=" + password;
 
-             }
-             catch (WebException e){
-                 MessageBox.Show(e.Message);
-                 Console.WriteLine("Whole message:" + e.ToString());
-                 Console.WriteLine("Status: " + (int)e.Status);
-                 return e.Status.ToString(); 
-             }*/
+            try
+            {
+                var res = client.UploadString("https://172.16.0.2/api/sessions/login", "POST", data);
+                return res;
+
+            }
+            catch (WebException e){
+                MessageBox.Show(e.Message);
+                Console.WriteLine("Whole message:" + e.ToString());
+                Console.WriteLine("Status: " + (int)e.Status);
+                return e.Status.ToString(); 
+            }*/
 
 
         }
 
-        private String GetDomainName(String token) {
+        private String GetDomainName(String token)
+        {
             var domain = " ";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11;
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
@@ -236,7 +248,8 @@ namespace CRXLogon
             }
         }
 
-        private String GetPrintserver(String token) {
+        private String GetPrintserver(String token)
+        {
             var printserver = " ";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11;
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
@@ -250,7 +263,7 @@ namespace CRXLogon
             {
                 var res = client.DownloadData("https://admin/api/system/configuration/PRINTSERVER");
                 printserver = System.Text.Encoding.UTF8.GetString(res);
-               // MessageBox.Show("Printserver is at: " + printserver);
+                // MessageBox.Show("Printserver is at: " + printserver);
                 return printserver;
             }
             catch (Exception e)
@@ -260,14 +273,15 @@ namespace CRXLogon
             }
         }
 
-        private String GetLogonScript(String token) {
+        private String GetLogonScript(String token)
+        {
             var script = " ";
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls11;
             ServicePointManager.ServerCertificateValidationCallback += (sender, certificate, chain, sslPolicyErrors) => true;
             var client = new WebClient();
             client.Headers[HttpRequestHeader.Authorization] = "Bearer " + token;
             client.Headers[HttpRequestHeader.Accept] = "text/plain";
-            
+
             //var data = "username=" + name + "&password=" + password;
 
             try
@@ -277,7 +291,8 @@ namespace CRXLogon
                 //MessageBox.Show(script);
                 return script;
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 MessageBox.Show(e.Message);
                 return "failed";
             }
@@ -294,7 +309,7 @@ namespace CRXLogon
             System.Diagnostics.Process.Start("net.exe", "use /del * /yes");
             Application.Current.Shutdown();
             string path = ConfigurationManager.AppSettings["tmp"];
-            string fullPath = System.Environment.ExpandEnvironmentVariables(path); 
+            string fullPath = System.Environment.ExpandEnvironmentVariables(path);
 
 
             string logon = fullPath + "\\Logon.bat";

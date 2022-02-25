@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace OssLogon
+namespace CRXLogon
 {
     /// <summary>
     /// Interaktionslogik für "App.xaml"
