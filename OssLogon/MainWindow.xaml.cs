@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.NetworkInformation;
 using System.Windows;
 
 namespace CRXLogon
@@ -18,6 +19,7 @@ namespace CRXLogon
         public object HttpUtility { get; private set; }
 
         public String token;
+        public String domain;
 
         public MainWindow()
         {
@@ -33,6 +35,7 @@ namespace CRXLogon
 
         private void BTN_Connect(object sender, RoutedEventArgs e)
         {
+            domain = selectedDomain.SelectedItem.ToString();
             var t = String.IsNullOrEmpty(userName.Text);
             var p = String.IsNullOrEmpty(pw.Password);
             var b = userName.Text;
@@ -63,8 +66,26 @@ namespace CRXLogon
         private void OnLoad(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("net.exe", "use /del * /yes");
+            List<String> domains = GetDomains();
+            selectedDomain.ItemsSource = domains;
+            selectedDomain.SelectedItem = domains[0];
+            domain = domains[0];
+            Console.WriteLine(domains.Capacity);
         }
 
+        private List<String> GetDomains()
+        {
+            List<String> domains = new List<string>();
+            foreach (NetworkInterface @interface in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                String suffix = @interface.GetIPProperties().DnsSuffix;
+                if( suffix != "fritz.box" && suffix != "")
+                {
+                    domains.Add(suffix);
+                }
+            }
+            return domains;
+        }
         private void runScript(String script)
         {
             //MessageBox.Show(script + "runScript");
@@ -73,7 +94,7 @@ namespace CRXLogon
             string fullPath = System.Environment.ExpandEnvironmentVariables(path); ProcessStartInfo processInfo;
 
             // MessageBox.Show(fullPath + "savepath of script");
-            //string output = ""; 
+            //string output = "";
 
             string logon = fullPath + "\\Logon.bat";
 
@@ -162,7 +183,7 @@ namespace CRXLogon
             String Domain = GetDomainName(token);
             String printserver = GetPrintserver(token);
 
-            string share = "\\\\" + printserver + "\\print$";
+            string share = "\\\\" + printserver + "." + domain + "\\print$";
             string cred = Domain + "\\" + userName.Text;
             //  MessageBox.Show(Domain + "   " + printserver + " Cred is: " + cred );
 
@@ -192,16 +213,13 @@ namespace CRXLogon
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
             content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
 
-           // HttpResponseMessage res= client.PostAsync("https://192.168.79.128:443/api/sessions/login", new FormUrlEncodedContent(values)).Result;
-           
-                HttpResponseMessage res = client.PostAsync("https://admin/api/sessions/login", content).Result;
-                var token = res.Content.ReadAsStringAsync().Result;
+            HttpResponseMessage res = client.PostAsync("https://admin."+domain+"/api/sessions/login", content).Result;
+            var token = res.Content.ReadAsStringAsync().Result;
 
 
-                Console.WriteLine("just token: " + token);
-                Console.WriteLine("res Status: " + res.StatusCode);
-                // Console.WriteLine("CodeIs: ", res.Headers);
-            
+            Console.WriteLine("just token: " + token);
+            Console.WriteLine("res Status: " + res.StatusCode);
+            // Console.WriteLine("CodeIs: ", res.Headers);
             return res;
 
             /*client.Headers[HttpRequestHeader.ContentType] = "application/x-www-form-urlencoded";
@@ -218,7 +236,7 @@ namespace CRXLogon
                 MessageBox.Show(e.Message);
                 Console.WriteLine("Whole message:" + e.ToString());
                 Console.WriteLine("Status: " + (int)e.Status);
-                return e.Status.ToString(); 
+                return e.Status.ToString();
             }*/
 
 
@@ -237,7 +255,7 @@ namespace CRXLogon
 
             try
             {
-                var res = client.DownloadData("https://admin/api/system/configuration/WORKGROUP");
+                var res = client.DownloadData("https://admin." +domain+ "/api/system/configuration/WORKGROUP");
                 domain = System.Text.Encoding.UTF8.GetString(res);
                 return domain;
             }
@@ -261,7 +279,7 @@ namespace CRXLogon
 
             try
             {
-                var res = client.DownloadData("https://admin/api/system/configuration/PRINTSERVER");
+                var res = client.DownloadData("https://admin."+domain+"/api/system/configuration/PRINTSERVER");
                 printserver = System.Text.Encoding.UTF8.GetString(res);
                 // MessageBox.Show("Printserver is at: " + printserver);
                 return printserver;
@@ -286,7 +304,7 @@ namespace CRXLogon
 
             try
             {
-                var res = client.DownloadData("https://admin/api/sessions/logonScript/WIN");
+                var res = client.DownloadData("https://admin."+domain+"/api/sessions/logonScript/WIN");
                 script = System.Text.Encoding.UTF8.GetString(res);
                 //MessageBox.Show(script);
                 return script;
