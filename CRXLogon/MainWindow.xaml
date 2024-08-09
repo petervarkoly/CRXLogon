@@ -72,6 +72,6 @@
             <Button Grid.Row="0" Style="{StaticResource MaterialDesignRaisedDarkButton}" Background="#262933" Foreground="White" Content="Abbrechen" Click="BTN_Cancel" Height="43" Margin="223,23,28,32"/>
         </Grid>
         <Image Source="pack://application:,,,/cranix_logo.png" HorizontalAlignment="Left" Height="208" VerticalAlignment="Top" Width="206" Grid.ColumnSpan="2" Margin="20,10,0,0"/>
-        <ComboBox  Name="selectedDomain" HorizontalAlignment="Left" Margin="191,200,0,0" VerticalAlignment="Top" Width="137" Grid.Column="1"/>
+        <ComboBox  Name="selectedDomain" HorizontalAlignment="Left" Margin="185,200,0,0" VerticalAlignment="Top" Width="150" Grid.Column="1"/>
     </Grid>
 </Window>
