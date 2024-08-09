@@ -9,6 +9,7 @@
 *.user
 *.userosscache
 *.sln.docstates
+CRXLogonSetup/CRXLogonSetup-SetupFiles/CRXLogonSetup.msi
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
