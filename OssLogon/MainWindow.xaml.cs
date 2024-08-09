@@ -90,7 +90,7 @@ namespace CRXLogon
             string fullPath = System.Environment.ExpandEnvironmentVariables(path); ProcessStartInfo processInfo;
 
             // MessageBox.Show(fullPath + "savepath of script");
-            //string output = ""; 
+            //string output = "";
 
             string logon = fullPath + "\\Logon.bat";
 
@@ -193,7 +193,6 @@ namespace CRXLogon
             Console.WriteLine("GetToken url:" + url);
             Console.WriteLine("GetToken content:" + content);
             HttpResponseMessage res = client.PostAsync(url, content).Result;
-
             Console.WriteLine("GetToken Status: " + res.StatusCode);
             var token = res.Content.ReadAsStringAsync().Result;
             Console.WriteLine("GetToken token: " + token);
