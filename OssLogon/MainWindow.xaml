@@ -6,8 +6,7 @@
         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:CRXLogon"
         mc:Ignorable="d"
-
-    TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
         TextElement.FontWeight="Regular"
         TextElement.FontSize="13"
         TextOptions.TextFormattingMode="Ideal" 
@@ -57,7 +56,7 @@
             <ColumnDefinition Width="115*"/>
             <ColumnDefinition Width="403*"/>
         </Grid.ColumnDefinitions>
-        <Grid VerticalAlignment="Top" Margin="9.8,126,-8.6,0" Height="114" Grid.Column="1" >
+        <Grid VerticalAlignment="Top" Margin="9,84,10,0" Height="156" Grid.Column="1" >
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
@@ -73,5 +72,6 @@
             <Button Grid.Row="0" Style="{StaticResource MaterialDesignRaisedDarkButton}" Background="#262933" Foreground="White" Content="Abbrechen" Click="BTN_Cancel" Height="43" Margin="223,23,28,32"/>
         </Grid>
         <Image Source="pack://application:,,,/cranix_logo.png" HorizontalAlignment="Left" Height="208" VerticalAlignment="Top" Width="206" Grid.ColumnSpan="2" Margin="20,10,0,0"/>
+        <ComboBox  Name="selectedDomain" HorizontalAlignment="Left" Margin="191,200,0,0" VerticalAlignment="Top" Width="137" Grid.Column="1"/>
     </Grid>
 </Window>
