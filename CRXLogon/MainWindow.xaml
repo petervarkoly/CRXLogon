@@ -62,16 +62,16 @@
                 <RowDefinition Height="Auto"></RowDefinition>
                 <RowDefinition Height="Auto"></RowDefinition>
             </Grid.RowDefinitions>
-            <TextBox Grid.Row="0" x:Name="userName" materialDesign:HintAssist.Hint="Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="178,0,72,7" Foreground="white"/>
-            <PasswordBox Grid.Row="1" x:Name="pw" materialDesign:HintAssist.Hint="Passwort" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"  VerticalAlignment="Center" Margin="178,10,72,6" RenderTransformOrigin="0.461,0.861" Foreground="white"/>
+            <TextBox Grid.Row="0" Name="userName" materialDesign:HintAssist.Hint="Name" Style="{StaticResource MaterialDesignFloatingHintTextBox}" VerticalAlignment="Center" Margin="178,0,72,7" Foreground="white"/>
+            <PasswordBox Grid.Row="1" Name="pw" materialDesign:HintAssist.Hint="Passwort" Style="{StaticResource MaterialDesignFloatingHintPasswordBox}"  VerticalAlignment="Center" Margin="178,10,72,6" RenderTransformOrigin="0.461,0.861" Foreground="white"/>
             <materialDesign:PackIcon  Kind="Password" VerticalAlignment="Bottom" Margin="88,0,0,-0.8"  Grid.Row="1" RenderTransformOrigin="0.438,0.375" Height="42" Width="71" Grid.RowSpan="2" Foreground="Gray"/>
             <materialDesign:PackIcon  Kind="Account" VerticalAlignment="Center" Height="42" Margin="88,0,0,3" RenderTransformOrigin="1.312,0.35" Width="71" Foreground="Gray"/>
         </Grid>
         <Grid Height="98" VerticalAlignment="Top" Margin="84,223,76.4,-0.2" HorizontalAlignment="Center" Grid.ColumnSpan="2">
-            <Button Grid.Row="0" Style="{StaticResource MaterialDesignRaisedButton}" Background="#262933" Foreground="White" Content="Verbinden" Click="BTN_Connect" Height="43" Margin="30,23,231,32" />
-            <Button Grid.Row="0" Style="{StaticResource MaterialDesignRaisedDarkButton}" Background="#262933" Foreground="White" Content="Abbrechen" Click="BTN_Cancel" Height="43" Margin="223,23,28,32"/>
+            <Button Name="okButton" Grid.Row="0" Style="{StaticResource MaterialDesignRaisedButton}" Background="#262933" Foreground="White" Content="Verbinden" Click="BTN_Connect" Height="43" Margin="30,23,231,32" />
+            <Button Name="cancelButton" Grid.Row="0" Style="{StaticResource MaterialDesignRaisedDarkButton}" Background="#262933" Foreground="White" Content="Abbrechen" Click="BTN_Cancel" Height="43" Margin="223,23,28,32"/>
         </Grid>
         <Image Source="pack://application:,,,/cranix_logo.png" HorizontalAlignment="Left" Height="208" VerticalAlignment="Top" Width="206" Grid.ColumnSpan="2" Margin="20,10,0,0"/>
-        <ComboBox  Name="selectedDomain" HorizontalAlignment="Left" Margin="185,200,0,0" VerticalAlignment="Top" Width="150" Grid.Column="1"/>
+        <ComboBox Name="selectedDomain" IsEditable="True" HorizontalAlignment="Left" Margin="185,200,0,0" VerticalAlignment="Top" Width="150" Grid.Column="1"/>
     </Grid>
 </Window>

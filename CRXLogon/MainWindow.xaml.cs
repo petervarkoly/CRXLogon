@@ -35,15 +35,17 @@ namespace CRXLogon
 
         private void BTN_Connect(object sender, RoutedEventArgs e)
         {
-            domain = selectedDomain.SelectedItem.ToString();
+
+            domain = selectedDomain.Text;
             var t = String.IsNullOrEmpty(userName.Text);
             var p = String.IsNullOrEmpty(pw.Password);
+            var d = String.IsNullOrEmpty(domain);
             var b = userName.Text;
-            Console.WriteLine("BTN_Connect user" + p);
-            Console.WriteLine("BTN_Connect domain" + domain);
-            if (String.IsNullOrEmpty(userName.Text) || String.IsNullOrEmpty(pw.Password))
+            Console.WriteLine("BTN_Connect user " + p);
+            Console.WriteLine("BTN_Connect domain " + domain);
+            if ( t || p || d)
             {
-                String message = "Password und Benutzernamen eingeben!";
+                String message = "Password und Benutzernamen eingeben und domain wählen!";
                 String caption = "Fehler";
                 MessageBoxButton button = MessageBoxButton.OKCancel;
                 var result = MessageBox.Show(message, caption, button);
@@ -53,10 +55,9 @@ namespace CRXLogon
                 String name = userName.Text;
                 String pwd = string.Format(pw.Password);
                 //MessageBox.Show("User is:"+ user, "pw is:" + pwd);
+                enableDisable(false);
                 stConnect(name, pwd);
             }
-
-
         }
 
         private void OnLoad(object sender, RoutedEventArgs e)
@@ -64,9 +65,10 @@ namespace CRXLogon
             System.Diagnostics.Process.Start("net.exe", "use /del * /yes");
             List<String> domains = GetDomains();
             selectedDomain.ItemsSource = domains;
-            selectedDomain.SelectedItem = domains[0];
-            domain = domains[0];
-            Console.WriteLine(domains.Capacity);
+            if (domains.Count > 0) {
+                selectedDomain.SelectedItem = domains[0];
+                domain = domains[0];
+            }
         }
 
         private List<String> GetDomains()
@@ -116,7 +118,12 @@ namespace CRXLogon
             connect.ShowDialog();
         }
 
-
+        private void enableDisable(Boolean ed)
+        {
+            pw.IsEnabled = userName.IsEnabled = selectedDomain.IsEnabled = ed;
+            okButton.IsEnabled = ed;
+            cancelButton.IsEnabled = ed;
+        }
         public void stConnect(String name, String pwd)
         {
             HttpResponseMessage s =null ;
@@ -132,13 +139,14 @@ namespace CRXLogon
                 }
                 else if (s.StatusCode.ToString() == "Unauthorized")
                 {
-
                     pw.Clear();
                     String caption = "Fehler";
+                    enableDisable(true);
                     MessageBox.Show("Passwort falsch!", caption);
                 }
             }
             catch {
+                enableDisable(true);
                 MessageBox.Show("Admin nicht erreichbar!", "Unerreichbar");
             }
             /*Connect con = new Connect(name, pw, s);
